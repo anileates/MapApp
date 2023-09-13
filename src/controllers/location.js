@@ -19,6 +19,13 @@ const createLocation = expressAsyncHandler(async (req, res) => {
   });
 });
 
+const getAllLocations = expressAsyncHandler(async (req, res, next) => {
+  const locations = await Location.find({});
+
+  return res.status(200).json(locations);
+});
+
 module.exports = {
-    createLocation
+    createLocation,
+    getAllLocations
 }

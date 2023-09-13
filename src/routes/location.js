@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { createLocation } = require("../controllers/location");
+const { createLocation, getAllLocations } = require("../controllers/location");
+const requestValidator = require('../middlewares/requestValidator');
+const {createLocationSchema} = require('../validations/locationValidations');
 
 // create
-router.post("/", createLocation);
+router.post("/", requestValidator(createLocationSchema), createLocation);
 
 // get all
 router.get("/", getAllLocations);
