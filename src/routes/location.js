@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createLocation, getAllLocations } = require("../controllers/location");
+const { createLocation, getAllLocations, getOneLocation } = require("../controllers/location");
 const requestValidator = require('../middlewares/requestValidator');
 const {createLocationSchema} = require('../validations/locationValidations');
 
@@ -11,7 +11,7 @@ router.post("/", requestValidator(createLocationSchema), createLocation);
 router.get("/", getAllLocations);
 
 // get one detailed
-router.get("/:id", (req, res) => {});
+router.get("/:id", getOneLocation);
 
 // update
 router.put("/:id", (req, res) => {});

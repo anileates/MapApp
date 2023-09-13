@@ -25,7 +25,22 @@ const getAllLocations = expressAsyncHandler(async (req, res, next) => {
   return res.status(200).json(locations);
 });
 
+const getOneLocation = expressAsyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const location = await Location.findById(id);
+
+  if (!location) {
+    return res.status(404).json({
+      message: "Location not found",
+    });
+  }
+
+  return res.status(200).json(location);
+});
+
 module.exports = {
     createLocation,
-    getAllLocations
+    getAllLocations,
+    getOneLocation
 }
