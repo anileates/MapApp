@@ -1,13 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const Location = require("../models/Location");
-const expressAsyncHandler = require("express-async-handler");
+const { createLocation } = require("../controllers/location");
 
 // create
-router.post("/", (req, res) => {});
+router.post("/", createLocation);
 
 // get all
-router.get("/", (req, res) => {});
+router.get("/", getAllLocations);
 
 // get one detailed
 router.get("/:id", (req, res) => {});
