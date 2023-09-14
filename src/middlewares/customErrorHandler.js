@@ -1,6 +1,6 @@
 const customErrorHandler = (err, req, res, next) => {
     let customError = err;
-
+    
     if (err.name === 'CastError') {
         customError.message = 'Please provide a valid id';
         customError.status = 400;

@@ -7,7 +7,7 @@ const LocationSchema = new Schema({
     required: true,
   },
   location: {
-    locationType: {
+    type: {
       type: String,
       enum: ["Point"],
     },

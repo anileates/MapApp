@@ -1,8 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { createLocation, getAllLocations, getOneLocation } = require("../controllers/location");
+const { createLocation, getAllLocations, getOneLocation, deleteLocation, findShortestPath } = require("../controllers/location");
 const requestValidator = require('../middlewares/requestValidator');
 const {createLocationSchema} = require('../validations/locationValidations');
+
+// get shortest path
+router.get("/get-path", findShortestPath);
 
 // create
 router.post("/", requestValidator(createLocationSchema), createLocation);
@@ -13,10 +16,7 @@ router.get("/", getAllLocations);
 // get one detailed
 router.get("/:id", getOneLocation);
 
-// update
-router.put("/:id", (req, res) => {});
-
-// get shortest path
-router.get("/shortest-path", (req, res) => {});
+// delete
+router.delete("/:id", deleteLocation);
 
 module.exports = router;

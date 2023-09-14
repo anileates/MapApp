@@ -7,7 +7,7 @@ const createLocation = expressAsyncHandler(async (req, res) => {
   const location = await Location.create({
     name,
     location: {
-      locationType: "Point",
+      type: "Point",
       coordinates: [longitude, latitude],
     },
     markerColor,
@@ -15,7 +15,7 @@ const createLocation = expressAsyncHandler(async (req, res) => {
 
   return res.status(200).json({
     message: "Location created successfully",
-    location
+    location,
   });
 });
 
@@ -39,8 +39,45 @@ const getOneLocation = expressAsyncHandler(async (req, res, next) => {
   return res.status(200).json(location);
 });
 
+const deleteLocation = expressAsyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const location = await Location.findById(id);
+
+  if (!location) {
+    return res.status(404).json({
+      message: "Location not found",
+    });
+  }
+
+  await Location.findByIdAndDelete(id);
+
+  return res.status(200).json({
+    message: "Location deleted successfully",
+  });
+});
+
+const findShortestPath = expressAsyncHandler(async (req, res, next) => {
+  const { longitude, latitude } = req.query;
+
+  const locations = await Location.find({
+    location: {
+      $near: {
+        $geometry: {
+          type: "Point",
+          coordinates: [longitude, latitude],
+        },
+      },
+    },
+  });
+
+  return res.status(200).json(locations);
+});
+
 module.exports = {
-    createLocation,
-    getAllLocations,
-    getOneLocation
-}
+  createLocation,
+  getAllLocations,
+  getOneLocation,
+  deleteLocation,
+  findShortestPath,
+};
