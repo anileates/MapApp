@@ -18,5 +18,8 @@
     "morgan": "^1.10.0",
     "yup": "^1.2.0",
     "zod": "^3.22.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }

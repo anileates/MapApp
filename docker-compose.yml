@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  # MongoDB service
+  mongo_db:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - 2717:27017
+    volumes: 
+      - mongo_db:/data/db
+
+  # NodeJS API service
+  api:
+    build: . # Relative path of .dockerfile of API
+    ports:
+      - 8080:8080
+    environment:
+      PORT: 8080
+      MONGO_URI: mongodb://mongo_db:27017
+    depends_on: # This container (api) depends on mongo_db container. So, mongo_db container will be started first.
+      - mongo_db
+
+volumes:
+  mongo_db: {}
