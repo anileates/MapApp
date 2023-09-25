@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createLocation, getAllLocations, getOneLocation, deleteLocation, findShortestPath } = require("../controllers/location");
+const { createLocation, getAllLocations, getOneLocation, softDeleteLocation, findShortestPath } = require("../controllers/location");
 const requestValidator = require('../middlewares/requestValidator');
 const {createLocationSchema} = require('../validations/locationValidations');
 
@@ -17,6 +17,6 @@ router.get("/", getAllLocations);
 router.get("/:id", getOneLocation);
 
 // delete
-router.delete("/:id", deleteLocation);
+router.delete("/:id", softDeleteLocation);
 
 module.exports = router;

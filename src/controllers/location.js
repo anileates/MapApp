@@ -20,7 +20,7 @@ const createLocation = expressAsyncHandler(async (req, res) => {
 });
 
 const getAllLocations = expressAsyncHandler(async (req, res, next) => {
-  const locations = await Location.find({});
+  const locations = await Location.find({ isDeleted: false });
 
   return res.status(200).json(locations);
 });
@@ -28,7 +28,7 @@ const getAllLocations = expressAsyncHandler(async (req, res, next) => {
 const getOneLocation = expressAsyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const location = await Location.findById(id);
+  const location = await Location.findOne({ _id: id, isDeleted: false });
 
   if (!location) {
     return res.status(404).json({
@@ -39,10 +39,10 @@ const getOneLocation = expressAsyncHandler(async (req, res, next) => {
   return res.status(200).json(location);
 });
 
-const deleteLocation = expressAsyncHandler(async (req, res, next) => {
+const softDeleteLocation = expressAsyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const location = await Location.findById(id);
+  const location = await Location.findOne({ _id: id, isDeleted: false });
 
   if (!location) {
     return res.status(404).json({
@@ -50,10 +50,11 @@ const deleteLocation = expressAsyncHandler(async (req, res, next) => {
     });
   }
 
-  await Location.findByIdAndDelete(id);
+  location.isDeleted = true;
+  await location.save();
 
   return res.status(200).json({
-    message: "Location deleted successfully",
+    message: "Location deleted successfully"
   });
 });
 
@@ -69,6 +70,7 @@ const findShortestPath = expressAsyncHandler(async (req, res, next) => {
         },
       },
     },
+    isDeleted: false,
   });
 
   return res.status(200).json(locations);
@@ -78,6 +80,6 @@ module.exports = {
   createLocation,
   getAllLocations,
   getOneLocation,
-  deleteLocation,
+  softDeleteLocation,
   findShortestPath,
 };

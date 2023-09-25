@@ -5,12 +5,14 @@ const connectDatabase = require('./helpers/connectDatabase');
 const customErrorHandler = require('./middlewares/customErrorHandler');
 const app = express();
 
-require('dotenv').config({path: 'src/config/.env'})
+require('dotenv').config({path: './config/.env'})
 
 connectDatabase();
 
 app.use(express.json());
 app.use(morgan("dev"));
+
+app.get('/', (req, res) => { return res.send('Map App is up and running!')})
 
 app.use('/api/v1', routes);
 
