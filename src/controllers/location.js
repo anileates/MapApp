@@ -1,80 +1,99 @@
-const expressAsyncHandler = require("express-async-handler");
 const Location = require("../models/Location");
 
-const createLocation = expressAsyncHandler(async (req, res) => {
+const createLocation = async (req, res, next) => {
   const { name, longitude, latitude, markerColor } = req.body;
 
-  const location = await Location.create({
-    name,
-    location: {
-      type: "Point",
-      coordinates: [longitude, latitude],
-    },
-    markerColor,
-  });
+  try {
+    const location = await Location.create({
+      name,
+      location: {
+        type: "Point",
+        coordinates: [longitude, latitude],
+      },
+      markerColor,
+    });
 
-  return res.status(200).json({
-    message: "Location created successfully",
-    location,
-  });
-});
+    return res.status(200).json({
+      message: "Location created successfully",
+      location,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-const getAllLocations = expressAsyncHandler(async (req, res, next) => {
-  const locations = await Location.find({ isDeleted: false });
+const getAllLocations = async (req, res, next) => {
+  try {
+    const locations = await Location.find({ isDeleted: false });
 
-  return res.status(200).json(locations);
-});
+    return res.status(200).json(locations);
+  } catch (error) {
+    next(error);
+  }
+};
 
-const getOneLocation = expressAsyncHandler(async (req, res, next) => {
+const getOneLocation = async (req, res, next) => {
   const { id } = req.params;
 
-  const location = await Location.findOne({ _id: id, isDeleted: false });
+  try {
+    const location = await Location.findOne({ _id: id, isDeleted: false });
 
-  if (!location) {
-    return res.status(404).json({
-      message: "Location not found",
-    });
+    if (!location) {
+      return res.status(404).json({
+        message: "Location not found",
+      });
+    }
+
+    return res.status(200).json(location);
+  } catch (error) {
+    next(error);
   }
+};
 
-  return res.status(200).json(location);
-});
-
-const softDeleteLocation = expressAsyncHandler(async (req, res, next) => {
+const softDeleteLocation = async (req, res, next) => {
   const { id } = req.params;
 
-  const location = await Location.findOne({ _id: id, isDeleted: false });
+  try {
+    const location = await Location.findOne({ _id: id, isDeleted: false });
 
-  if (!location) {
-    return res.status(404).json({
-      message: "Location not found",
+    if (!location) {
+      return res.status(404).json({
+        message: "Location not found",
+      });
+    }
+  
+    location.isDeleted = true;
+    await location.save();
+  
+    return res.status(200).json({
+      message: "Location deleted successfully",
     });
+  } catch (error) {
+    next(error);
   }
+};
 
-  location.isDeleted = true;
-  await location.save();
-
-  return res.status(200).json({
-    message: "Location deleted successfully"
-  });
-});
-
-const findShortestPath = expressAsyncHandler(async (req, res, next) => {
+const findShortestPath = async (req, res, next) => {
   const { longitude, latitude } = req.query;
 
-  const locations = await Location.find({
-    location: {
-      $near: {
-        $geometry: {
-          type: "Point",
-          coordinates: [longitude, latitude],
+  try {
+    const locations = await Location.find({
+      location: {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: [longitude, latitude],
+          },
         },
       },
-    },
-    isDeleted: false,
-  });
-
-  return res.status(200).json(locations);
-});
+      isDeleted: false,
+    });
+  
+    return res.status(200).json(locations);
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   createLocation,
